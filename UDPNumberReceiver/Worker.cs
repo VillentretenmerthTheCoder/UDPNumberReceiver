@@ -9,7 +9,7 @@ namespace UDPNumberReceiver
 {
     public class Worker
     {
-        private string URL = "https://localhost:44386/api/SensorDatas";
+        private string URL = "https://sensorewebapi20191117112306.azurewebsites.net/api/SensorDatas";
 
         public async Task<IList<SensorData>> GetAllDataAsync()
         {
