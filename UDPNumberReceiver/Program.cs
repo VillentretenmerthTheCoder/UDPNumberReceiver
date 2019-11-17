@@ -5,12 +5,13 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace UDPNumberReceiver
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             //Creates a UdpClient for reading incoming data.
             UdpClient udpServer = new UdpClient(9999);
@@ -44,10 +45,27 @@ namespace UDPNumberReceiver
                         string CO = data[11];
                         string NOx = data[15];
                         string Date = data[8];
-                        string ParticleLEvel = data[19];
+                        string ParticleLevel = data[19];
                         SumCO = SumCO + float.Parse(CO);
                         SumNOx = SumNOx + float.Parse(NOx);
                         Console.WriteLine(receivedData + $"\r\n Sum of all CO: {SumCO}\r\n Sum of all NOx: {SumNOx}\r\n");
+
+                        Worker worker = new Worker();
+                        //Posting data to Rest Service.
+                        SensorData sensordata = new SensorData(Date, CO, NOx, ParticleLevel);
+                        string content = JsonConvert.SerializeObject(sensordata);
+                        await worker.PostDataAsync(content);
+                        
+                        
+                        
+                        //IList<SensorData> cList = await worker.GetAllDataAsync();
+
+                        //foreach (SensorData i in cList)
+                        //{
+                        //    Console.WriteLine(i.ToString());
+                        //}
+
+
                     }
                 }
                 }
@@ -55,6 +73,11 @@ namespace UDPNumberReceiver
             {
                 Console.WriteLine(e.ToString());
             }
+
+
+            
+
+
         }
     }
 }
